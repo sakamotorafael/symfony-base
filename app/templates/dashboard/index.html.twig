@@ -1,22 +1,90 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello DashboardController!{% endblock %}
+{% block title %}Dashboard{% endblock %}
 
 {% block body %}
 <style>
     .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
     .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+    .canvas-container {
+        width: 100%;
+        height: 200px;
+    }
+
+    .canvas-style {
+        border: 1px solid #000;
+    }
 </style>
 
 <div class="example-wrapper">
     {% include '/global/header.html.twig' %}
 
-    <h1>Hello {{ controller_name }}! ✅</h1>
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">
+            {{ message }}
+        </div>
+    {% endfor %}
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ '/var/www/html/src/Controller/DashboardController.php'|file_link(0) }}">src/Controller/DashboardController.php</a></code></li>
-        <li>Your template at <code><a href="{{ '/var/www/html/templates/dashboard/index.html.twig'|file_link(0) }}">templates/dashboard/index.html.twig</a></code></li>
-    </ul>
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    <h1>Hello {{ username }}! ✅</h1>
+
+    {#    action="/admin/dashboard/{{ username }}" #}
+    {#    {{ path('canvas_create', {'username': username}) }} #}
+    <form action="{{ path('canvas_create') }}" enctype="multipart/form-data" method="POST">
+        <h2>Crie uma desenho e salve!</h2>
+
+        <div class="canvas-container">
+            <canvas id="myCanvas" class="canvas-style"></canvas>
+        </div>
+
+        <input type="hidden" name="canvasData" id="canvasData" />
+
+        <input type="submit"/>
+    </form>
 </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let canvas = document.querySelector('.canvas-style');
+            let canvasContainer = document.querySelector('.canvas-container');
+            let context = canvas.getContext('2d');
+            let canvasDataInput = document.getElementById('canvasData');
+
+            canvasDataInput.value = canvas.toDataURL();
+
+
+            canvas.width = canvasContainer.clientWidth;
+            canvas.height = canvasContainer.clientHeight;
+
+            let isDrawing = false;
+
+            canvas.addEventListener('mousedown', function(e) {
+                isDrawing = true;
+                context.beginPath();
+                context.moveTo(e.pageX - canvas.offsetLeft, e.pageY - canvas.offsetTop);
+            });
+
+            canvas.addEventListener('mousemove', function(e) {
+                if (isDrawing) {
+                    context.lineTo(e.pageX - canvas.offsetLeft, e.pageY - canvas.offsetTop);
+                    context.stroke();
+                }
+            });
+
+            canvas.addEventListener('mouseup', function() {
+                isDrawing = false;
+            });
+
+            canvas.addEventListener('mouseleave', function() {
+                isDrawing = false;
+            });
+        });
+    </script>
 {% endblock %}
