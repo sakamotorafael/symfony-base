@@ -4,12 +4,12 @@ namespace App\Factory;
 
 use App\Dto\Request\UserRequestDto;
 use App\Entity\User;
-use Symfony\Component\PasswordHasher\PasswordHasherInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class UserFactory
+readonly class UserFactory
 {
     public function __construct(
-        private PasswordHasherInterface $passwordHasher
+        private UserPasswordHasherInterface $userPasswordHasherInterface
     )
     {
     }
@@ -22,7 +22,10 @@ class UserFactory
             ->setEmail($userRequestDto->getEmail())
             ->setRoles($userRequestDto->getRoles());
 
-        $this->passwordHasher->hash($userRequestDto->getPassword(), $user);
+        $this->userPasswordHasherInterface->hashPassword(
+            $user,
+            $userRequestDto->getPassword()
+        );
 
         return $user;
     }
