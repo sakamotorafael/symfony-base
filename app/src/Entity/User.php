@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -26,6 +28,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \JsonSe
      */
     #[ORM\Column]
     private ?string $password = null;
+
+    #[ORM\OneToMany(mappedBy: 'User', targetEntity: Canvas::class)]
+    private Collection $canvases;
+
+    public function __construct()
+    {
+        $this->canvases = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -104,5 +114,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \JsonSe
             'roles' => $this->getRoles(),
             'passworld' => $this->getPassword()
         ];
+    }
+
+    /**
+     * @return Collection<int, Canvas>
+     */
+    public function getCanvases(): Collection
+    {
+        return $this->canvases;
+    }
+
+    public function addCanvas(Canvas $canvas): static
+    {
+        if (!$this->canvases->contains($canvas)) {
+            $this->canvases->add($canvas);
+            $canvas->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCanvas(Canvas $canvas): static
+    {
+        if ($this->canvases->removeElement($canvas)) {
+            // set the owning side to null (unless already changed)
+            if ($canvas->getUser() === $this) {
+                $canvas->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }

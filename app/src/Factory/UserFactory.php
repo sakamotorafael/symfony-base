@@ -22,10 +22,12 @@ readonly class UserFactory
             ->setEmail($userRequestDto->getEmail())
             ->setRoles($userRequestDto->getRoles());
 
-        $this->userPasswordHasherInterface->hashPassword(
+        $passwordHashed = $this->userPasswordHasherInterface->hashPassword(
             $user,
             $userRequestDto->getPassword()
         );
+
+        $user->setPassword($passwordHashed);
 
         return $user;
     }

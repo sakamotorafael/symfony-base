@@ -16,7 +16,7 @@ class UserRequestDto implements \JsonSerializable
 
         $this->email = $data['email'] ?? $this->throwError();
         $this->roles = $data['roles'] ?? $this->throwError();
-        $this->password = $data['passworld'] ?? $this->throwError();
+        $this->password = $data['password'] ?? $this->throwError();
     }
 
     public function getEmail(): ?string
@@ -36,7 +36,7 @@ class UserRequestDto implements \JsonSerializable
 
     public function throwError(): void
     {
-        throw new \Exception('Limpeza não encontrada');
+        throw new \Exception('Erro');
     }
 
     public function jsonSerialize(): array
@@ -44,7 +44,7 @@ class UserRequestDto implements \JsonSerializable
         return [
             'email' => $this->getEmail(),
             'roles' => $this->getRoles(),
-            'passworld' => $this->getPassword()
+            'password' => $this->getPassword()
         ];
     }
 }
