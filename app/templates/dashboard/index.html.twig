@@ -3,65 +3,51 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block body %}
+    <div>
+        <header>
+            {% include '/global/header.html.twig' %}
+        </header>
+
+        <div class="container-general">
+            <section>
+                {% for message in app.flashes('error') %}
+                    <div class="alert alert-danger">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+
+                {% for message in app.flashes('success') %}
+                    <div class="alert alert-success">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </section>
+
+            <section class="section-main">
+                <h2>Crie um desenho e salve!</h2>
+                <div class="canvas-container">
+                    <canvas id="myCanvas" class="canvas-style"></canvas>
+                </div>
+                <form action="{{ path('canvas_create') }}" enctype="multipart/form-data" method="POST">
+                    <input type="text" name="canvasData" id="canvasData" class="canvasData" required/>
+
+                    <input type="submit"/>
+                </form>
+            </section>
+        </div>
+    </div>
+
 <style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-    .canvas-container {
-        width: 100%;
-        height: 200px;
-    }
 
-    .canvas-style {
-        border: 1px solid #000;
-    }
 </style>
-
-<div class="example-wrapper">
-    {% include '/global/header.html.twig' %}
-
-    {% for message in app.flashes('error') %}
-        <div class="alert alert-danger">
-            {{ message }}
-        </div>
-    {% endfor %}
-
-    {% for message in app.flashes('success') %}
-        <div class="alert alert-success">
-            {{ message }}
-        </div>
-    {% endfor %}
-
-    <h1>Hello {{ username }}! ✅</h1>
-
-    {#    action="/admin/dashboard/{{ username }}" #}
-    {#    {{ path('canvas_create', {'username': username}) }} #}
-    <form action="{{ path('canvas_create') }}" enctype="multipart/form-data" method="POST">
-        <h2>Crie uma desenho e salve!</h2>
-
-        <div class="canvas-container">
-            <canvas id="myCanvas" class="canvas-style"></canvas>
-        </div>
-
-        <input type="hidden" name="canvasData" id="canvasData" />
-
-        <input type="submit"/>
-    </form>
-</div>
 {% endblock %}
 
 {% block javascripts %}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             let canvas = document.querySelector('.canvas-style');
-            let canvasContainer = document.querySelector('.canvas-container');
             let context = canvas.getContext('2d');
             let canvasDataInput = document.getElementById('canvasData');
-
-            canvasDataInput.value = canvas.toDataURL();
-
-
-            canvas.width = canvasContainer.clientWidth;
-            canvas.height = canvasContainer.clientHeight;
 
             let isDrawing = false;
 
@@ -69,6 +55,8 @@
                 isDrawing = true;
                 context.beginPath();
                 context.moveTo(e.pageX - canvas.offsetLeft, e.pageY - canvas.offsetTop);
+
+                canvasDataInput.value = canvas.toDataURL();
             });
 
             canvas.addEventListener('mousemove', function(e) {

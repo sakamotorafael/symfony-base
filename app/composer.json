@@ -10,6 +10,7 @@
         "doctrine/doctrine-bundle": "^2.11",
         "doctrine/doctrine-migrations-bundle": "^3.3",
         "doctrine/orm": "^2.17",
+        "symfony/asset": "6.4.*",
         "symfony/console": "6.4.*",
         "symfony/dotenv": "6.4.*",
         "symfony/flex": "^2",
@@ -21,7 +22,10 @@
         "symfony/validator": "6.4.*",
         "symfony/yaml": "6.4.*",
         "twig/extra-bundle": "^2.12|^3.0",
-        "twig/twig": "^2.12|^3.0"
+        "twig/twig": "^2.12|^3.0",
+        "ext-gd": "*",
+        "ext-imagick": "*",
+        "cloudinary/cloudinary_php": "^2"
     },
     "require-dev": {
         "symfony/maker-bundle": "^1.52"

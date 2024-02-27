@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Dto\CanvasDto;
 use App\Service\CanvasService;
+use App\Service\CloudinaryService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,7 +17,8 @@ class CanvasController extends AbstractController
 
     public function __construct(
         private readonly Security $security,
-        private readonly CanvasService $canvasService
+        private readonly CanvasService $canvasService,
+        private readonly CloudinaryService $cloudinaryService
     )
     {
     }
@@ -28,7 +30,10 @@ class CanvasController extends AbstractController
             $user = $this->security->getUser();
             $data = $request->request->all();
 
-            $canvasDto = new CanvasDto($data, $user);
+            $imageUrl = $this->cloudinaryService->sendImageFileToCloudinaryAndGetReference($data['canvasData']);
+
+            $canvasDto = new CanvasDto($imageUrl, $user);
+
             $this->canvasService->createUser($canvasDto);
 
             $this->addFlash('success', 'Canvas salvo com sucesso!');

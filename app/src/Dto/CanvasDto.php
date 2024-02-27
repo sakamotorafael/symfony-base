@@ -2,38 +2,38 @@
 
 namespace App\Dto;
 
-use Symfony\Component\Security\Core\User\UserInterface;
+use App\Entity\User;
 
 class CanvasDto implements \JsonSerializable
 {
-    private UserInterface $user;
-    private string $data;
+    private User $user;
+    private string $imageUrl;
 
-    public function __construct(array $data, UserInterface $user)
+    public function __construct(string $imageUrl, User $user)
     {
-        $this->data = $data['canvasData'] ?? $this->throwError();
+        $this->imageUrl = $imageUrl;
         $this->user = $user;
     }
 
-    public function getData(): string
+    public function getImageUrl(): string
     {
-        return $this->data;
+        return $this->imageUrl;
     }
 
-    public function getUser(): UserInterface
+    public function getUser(): User
     {
         return $this->user;
     }
 
     public function throwError(): void
     {
-        throw new \Exception('Limpeza não encontrada');
+        throw new \Exception('Base64 não encontrada');
     }
 
     public function jsonSerialize(): array
     {
         return [
-            'canvasData' => $this->getData(),
+            'imageUrl' => $this->getImageUrl(),
             'user' => $this->getUser()
         ];
     }
