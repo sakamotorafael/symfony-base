@@ -18,7 +18,7 @@ readonly class CanvasFactory
 
         $canvas
             ->setUser($canvasDto->getUser())
-            ->setData($canvasDto->getData());
+            ->setData($canvasDto->getImageUrl());
 
         return $canvas;
     }

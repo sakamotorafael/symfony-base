@@ -12,7 +12,7 @@ readonly class CanvasService
 
     public function __construct(
         private CanvasRepository $canvasRepository,
-        private CanvasFactory    $canvasFactory
+        private CanvasFactory    $canvasFactory,
     )
     {
     }
