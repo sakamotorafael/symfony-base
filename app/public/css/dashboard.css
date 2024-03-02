@@ -28,9 +28,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-
-    padding-top: 16px;
-    border: 1px solid red;
+    justify-content: center;
 }
 
 a.button-link, a.button-logout {
@@ -75,6 +73,7 @@ a.button-logout:hover {
     width: 100%;
     height: 400px;
     margin: 0 auto;
+    border-radius: 8px;
 }
 
 .canvas-style {
@@ -84,6 +83,8 @@ a.button-logout:hover {
 .section-main {
     display: flex;
     flex-direction: column;
-    align-items: center;
     width: 100%;
+    gap: 16px;
+
+    margin-top: 96px;
 }

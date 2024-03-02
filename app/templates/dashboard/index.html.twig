@@ -9,21 +9,21 @@
         </header>
 
         <div class="container-general">
-            <section>
-                {% for message in app.flashes('error') %}
-                    <div class="alert alert-danger">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-
-                {% for message in app.flashes('success') %}
-                    <div class="alert alert-success">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            </section>
-
             <section class="section-main">
+                <section>
+                    {% for message in app.flashes('error') %}
+                        <div class="alert alert-danger">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+
+                    {% for message in app.flashes('success') %}
+                        <div class="alert alert-success">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </section>
+
                 <h2>Crie um desenho e salve!</h2>
                 <div class="canvas-container">
                     <canvas id="myCanvas" class="canvas-style"></canvas>
@@ -31,7 +31,7 @@
                 <form action="{{ path('canvas_create') }}" enctype="multipart/form-data" method="POST">
                     <input type="text" name="canvasData" id="canvasData" class="canvasData" required/>
 
-                    <input type="submit"/>
+                    <input type="submit" class="btn btn-lg btn-dark " value="Enviar"/>
                 </form>
             </section>
         </div>
@@ -48,6 +48,10 @@
             let canvas = document.querySelector('.canvas-style');
             let context = canvas.getContext('2d');
             let canvasDataInput = document.getElementById('canvasData');
+            let canvasContainer = document.querySelector('.canvas-container');
+
+            canvas.width = canvasContainer.clientWidth;
+            canvas.height = canvasContainer.clientHeight;
 
             let isDrawing = false;
 
@@ -55,8 +59,6 @@
                 isDrawing = true;
                 context.beginPath();
                 context.moveTo(e.pageX - canvas.offsetLeft, e.pageY - canvas.offsetTop);
-
-                canvasDataInput.value = canvas.toDataURL();
             });
 
             canvas.addEventListener('mousemove', function(e) {
@@ -67,6 +69,7 @@
             });
 
             canvas.addEventListener('mouseup', function() {
+                canvasDataInput.value = canvas.toDataURL();
                 isDrawing = false;
             });
 
