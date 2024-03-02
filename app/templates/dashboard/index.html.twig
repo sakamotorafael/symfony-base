@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block body %}
+    <div>
+        <header>
+            {% include '/global/header.html.twig' %}
+        </header>
+
+        <div class="container-general">
+            <section class="section-main">
+                <section>
+                    {% for message in app.flashes('error') %}
+                        <div class="alert alert-danger">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+
+                    {% for message in app.flashes('success') %}
+                        <div class="alert alert-success">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </section>
+
+                <h2>Crie um desenho e salve!</h2>
+                <div class="canvas-container">
+                    <canvas id="myCanvas" class="canvas-style"></canvas>
+                </div>
+                <form action="{{ path('canvas_create') }}" enctype="multipart/form-data" method="POST">
+                    <input type="text" name="canvasData" id="canvasData" class="canvasData" required/>
+
+                    <input type="submit" class="btn btn-lg btn-dark " value="Enviar"/>
+                </form>
+            </section>
+        </div>
+    </div>
+
+<style>
+
+</style>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let canvas = document.querySelector('.canvas-style');
+            let context = canvas.getContext('2d');
+            let canvasDataInput = document.getElementById('canvasData');
+            let canvasContainer = document.querySelector('.canvas-container');
+
+            canvas.width = canvasContainer.clientWidth;
+            canvas.height = canvasContainer.clientHeight;
+
+            let isDrawing = false;
+
+            canvas.addEventListener('mousedown', function(e) {
+                isDrawing = true;
+                context.beginPath();
+                context.moveTo(e.pageX - canvas.offsetLeft, e.pageY - canvas.offsetTop);
+            });
+
+            canvas.addEventListener('mousemove', function(e) {
+                if (isDrawing) {
+                    context.lineTo(e.pageX - canvas.offsetLeft, e.pageY - canvas.offsetTop);
+                    context.stroke();
+                }
+            });
+
+            canvas.addEventListener('mouseup', function() {
+                canvasDataInput.value = canvas.toDataURL();
+                isDrawing = false;
+            });
+
+            canvas.addEventListener('mouseleave', function() {
+                isDrawing = false;
+            });
+        });
+    </script>
+{% endblock %}
