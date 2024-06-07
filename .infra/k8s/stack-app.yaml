@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: painelapp
+  name: your-app
 spec:
   selector:
     matchLabels:
-      app: painelapp
+      app: your-app
   template:
     metadata:
       labels:
-        app: painelapp
+        app: your-app
     spec:
       containers:
-      - name: painelapp
+      - name: your-app
         image: registry.digitalocean.com/charlie-container-registry/painel:1.0
         ports:
         - containerPort: 80
@@ -24,10 +24,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: painelapp-services
+  name: your-app-services
 spec:
   selector:
-    app: painelapp
+    app: your-app
   ports:
   - name: nginx
     protocol: TCP

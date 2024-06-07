@@ -1,5 +1,5 @@
 apiVersion: v2
-name: painel-backend-stack
+name: backend-stack
 description: A Helm chart for painel backend stack
 
 # A chart can be either an 'application' or a 'library' chart.
