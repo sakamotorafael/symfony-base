@@ -1,6 +1,6 @@
 services:
   app:
-    container_name: cerberus_app
+    container_name: project_name_app
     env_file:
       - ./app/.env
     build:
@@ -10,7 +10,7 @@ services:
       - ./app:/var/www/app
       - ./.infra/develop/app:/usr/local/etc/php/conf.d
     networks:
-      - cerberus-network
+      - network
     depends_on:
       - db
 
@@ -24,13 +24,13 @@ services:
       - db_dump:/sql
       - db_data:/var/lib/mysql
     networks:
-      - cerberus-network
+      - project_name_app-network
 
   redis:
     image: redis:7.2.5-alpine3.20
     command: redis-server
     networks:
-      - cerberus-network
+      - project_name_app-network
     depends_on:
       - db
     ports:
@@ -47,7 +47,7 @@ services:
     ports:
       - '8666:80'
     networks:
-      - cerberus-network
+      - project_name_app-network
     depends_on:
       - app
 
@@ -56,4 +56,4 @@ volumes:
   db_dump:
 
 networks:
-  cerberus-network:
+  project_name_app-network:

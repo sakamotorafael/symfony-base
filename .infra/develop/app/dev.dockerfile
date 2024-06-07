@@ -1,4 +1,4 @@
-FROM registry.digitalocean.com/charlie-container-registry/base:latest
+FROM base:latest
 
 WORKDIR /var/www/app
 
