@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.painel.deployName }}
+  namespace: {{ .Values.global.namespace }}
+spec:
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: {{ .Values.painel.deployName }}
+{{/*  replicas: {{ default "1" .Values.painel.initialReplicas }}*/}}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.painel.deployName }}
+    spec:
+      containers:
+      - name: {{ .Values.painel.deployName }}
+        image: {{ .Values.global.painelImageName }}:{{ .Values.global.painelImageVersion }}
+        ports:
+        - containerPort: {{ default "80" .Values.painel.containerPort }}
+        imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+        resources:
+          requests:
+            cpu: {{ .Values.painel.requestsCPU }}
+            memory: {{ .Values.painel.requestsMemory }}
+          limits:
+            cpu: {{ .Values.painel.limitsCPU }}
+            memory: {{ .Values.painel.limitsMemory }}
+        livenessProbe:
+          httpGet:
+            path: /healthcheck
+            port: 80
+          initialDelaySeconds: 200
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 5
+          timeoutSeconds: 20
+        lifecycle:
+            postStart:
+              exec:
+                command: [
+                  "/bin/sh",
+                  "-c", 
+                  "./bin/console d:m:m --no-interaction && bin/console c:c && chown www-data:www-data -R ./var"
+                  ]
+        envFrom:
+        - secretRef:
+            name: {{ .Values.global.secretName }}
+        volumeMounts:
+        {{- include "volumeMount" . | indent 8 }}
+        {{- include "jwtKeyPairsVolumeMount" . | indent 8 }}
+      volumes:
+      {{- include "volumes" . | indent 6 }}
+      {{- include "jwtKeyPairsVolumes" . | indent 6 }}

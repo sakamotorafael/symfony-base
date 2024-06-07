@@ -1,46 +1,59 @@
-version: '3.9'
-
 services:
   app:
-    container_name: project_app
+    container_name: cerberus_app
     env_file:
       - ./app/.env
     build:
-      context: .
-      dockerfile: .docker/app/Dockerfile
+      context: .infra/develop/app
+      dockerfile: dev.dockerfile
     volumes:
-      - ./app:/var/www/html
+      - ./app:/var/www/app
+      - ./.infra/develop/app:/usr/local/etc/php/conf.d
     networks:
-      - project-network
+      - cerberus-network
     depends_on:
       - db
 
   db:
     image: mysql:8.0
-    ports:
-      - "4123:3306"
     env_file:
       - ./app/.env
+    ports:
+      - "4166:3306"
     volumes:
-      - .docker/db/sql:/sql
-      - .docker/db/var:/var/lib/mysql
+      - db_dump:/sql
+      - db_data:/var/lib/mysql
     networks:
-      - project-network
+      - cerberus-network
+
+  redis:
+    image: redis:7.2.5-alpine3.20
+    command: redis-server
+    networks:
+      - cerberus-network
+    depends_on:
+      - db
+    ports:
+      - "6379:6379"
 
   nginx:
     build:
-      context: .docker/nginx
+      context: ./.infra/develop/nginx
     volumes:
-      - ./app:/var/www/html:delegated
-      - .docker/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - .docker/nginx/sites:/etc/nginx/sites-available
-      - .docker/nginx/conf.d/:/etc/nginx/conf.d
+      - ./app:/var/www/app:delegated
+      - ./.infra/develop/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./.infra/develop/nginx/sites:/etc/nginx/sites-available
+      - ./.infra/develop/nginx/conf.d/:/etc/nginx/conf.d
     ports:
-      - '8765:80'
+      - '8666:80'
     networks:
-      - project-network
+      - cerberus-network
     depends_on:
       - app
 
+volumes:
+  db_data:
+  db_dump:
+
 networks:
-  project-network:
+  cerberus-network:

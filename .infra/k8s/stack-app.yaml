@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: painelapp
+spec:
+  selector:
+    matchLabels:
+      app: painelapp
+  template:
+    metadata:
+      labels:
+        app: painelapp
+    spec:
+      containers:
+      - name: painelapp
+        image: registry.digitalocean.com/charlie-container-registry/painel:1.0
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: painelapp-services
+spec:
+  selector:
+    app: painelapp
+  ports:
+  - name: nginx
+    protocol: TCP
+    port: 80
+  type: ClusterIP

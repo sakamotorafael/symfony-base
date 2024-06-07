@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.painel.serviceName }}
+  namespace: {{ .Values.global.namespace }}
+spec:
+  selector:
+    app: {{ .Values.painel.deployName }}
+  ports:
+  - protocol: {{ default "TCP" .Values.painel.protocol }}
+    port: {{ default "80" .Values.painel.servicePort }}
+
+  type: {{ default "ClusterIP" .Values.painel.serviceType }}

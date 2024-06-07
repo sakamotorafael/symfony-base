@@ -1,0 +1,25 @@
+FROM php:8.2-fpm-alpine
+
+RUN apk --update --no-cache add git $PHPIZE_DEPS icu-dev
+RUN apk upgrade
+
+# dependencias do PHP vvvvv
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+RUN chmod +x /usr/local/bin/install-php-extensions && \
+install-php-extensions intl pdo_mysql gd imagick
+
+RUN apk add bash \
+        tzdata \
+        build-base \
+        autoconf \
+        rabbitmq-c-dev \
+        nginx 
+
+RUN pecl install amqp
+
+RUN docker-php-ext-enable amqp
+
+ENV TZ="America/Sao_Paulo"
+
+# Installing Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer

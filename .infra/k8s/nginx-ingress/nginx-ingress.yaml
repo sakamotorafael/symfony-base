@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: painel-ingress
+  namespace: painel
+  annotations:
+    cert-manager.io/issuer: letsencrypt-dev
+    nginx.ingress.kubernetes.io/proxy-body-size: 20m
+#    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+#    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+status:
+  loadBalancer:
+    ingress:
+      - ip: 159.203.54.84
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: painel.staycharlie.com.br # devo criar um host na digital ocean
+      http:
+        paths:
+          - pathType: Prefix
+            backend:
+              service:
+                name: painelapp-services
+                port:
+                  number: 80
+            path: /
+    # This section is only required if TLS is to be enabled for the Ingress
+  tls:
+    - hosts:
+      - painel.staycharlie.com.br # devo criar um host na digital ocean
+      secretName: tls-secret-dev
